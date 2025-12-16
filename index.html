@@ -1,1051 +1,842 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Management System</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KDKMP TPP Sultra</title>
+<link rel="icon" type="image/x-icon" href="word.png">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
+<style>
+:root {
+  --primary-color: #8ccaf3;
+  --secondary-color: #1e56f0;
+  --accent-color: #e74c3c;
+  --light-color: #f8f9fa;
+  --dark-color: #2c3e50;
+  --info-color: #3498db;
+}
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7f9;
+  padding-bottom: 70px;
+}
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  position: relative;
+  color: #fff;
+}
 
-        .header p {
-            opacity: 0.9;
-        }
+.app-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.05));
+  border-radius: 12px;
+  pointer-events: none;
+}
 
-        .nav-tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-        }
+/* Logo */
+.header-logos {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
 
-        .tab {
-            padding: 15px 30px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 16px;
-            font-weight: 500;
-            color: #495057;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+.header-logos .logo {
+  height: 80px;
+  width: auto;
+  border-radius: 8px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+.header-logos .logo:hover { opacity: 1; }
 
-        .tab:hover {
-            background: #e9ecef;
-        }
+/* Teks */
+.header-text {
+  z-index: 1;
+  text-align: left;
+}
+.header-text h1,
+.header-text p {
+  margin: 0;
+  color: #fff;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
 
-        .tab.active {
-            color: #667eea;
-            background: white;
-        }
+/* Responsive */
+@media (max-width: 768px) {
+  .header-logos { display: none; }
+  .app-header {
+    justify-content: center;
+    text-align: center;
+  }
+  .header-text { text-align: center; }
+  .header-text h1 { font-size: 1.5rem; }
+  .header-text p  { font-size: 1rem; }
+}
 
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #667eea;
-        }
+@media (max-width: 480px) {
+  .app-header { padding: 15px; }
+  .header-text h1 { font-size: 1.2rem; }
+  .header-text p  { font-size: 0.9rem; }
+}
 
-        .tab-content {
-            display: none;
-            padding: 30px;
-            min-height: 500px;
-        }
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+  border: none;
+}
 
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
+.card-header {
+  background-color: white;
+  border-bottom: 1px solid #eaeaea;
+  font-weight: 600;
+  padding: 15px 20px;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.btn-action {
+  margin: 5px;
+  border-radius: 6px;
+  font-weight: 500;
+}
 
-        /* Data Table Styles */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
+/* Tabel */
+#tblData {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0;
+}
 
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
+thead {
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+  color: white;
+}
 
-        .data-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
+#tblData th {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 10px;
+  position: sticky;
+  top: 0;
+}
 
-        .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
+#tblData td {
+  padding: 10px;
+  vertical-align: middle;
+}
 
-        .data-table tr:hover {
-            background: #f8f9fa;
-        }
+#tblData tbody tr {
+  transition: background-color 0.2s;
+}
 
-        .data-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
+#tblData tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+  cursor: pointer;
+}
 
-        .data-table tr:nth-child(even):hover {
-            background: #e9ecef;
-        }
+/* Highlight */
+.row-highlight {
+  animation: highlight 2s ease;
+}
 
-        /* Form Styles */
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+@keyframes highlight {
+  0% { background-color: rgba(76, 175, 80, 0.3); }
+  100% { background-color: transparent; }
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+/* Modal */
+.modal-content {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
+.modal-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 15px 20px;
+}
 
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
+.modal-body {
+  padding: 20px;
+}
 
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+.modal-footer {
+  border-top: 1px solid #eaeaea;
+  padding: 15px 20px;
+}
 
-        .form-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+.form-label {
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
 
-        .form-col {
-            flex: 1;
-        }
+.form-control, .form-select {
+  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
 
-        /* Button Styles */
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+/* Spinner */
+#spinnerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.9);
+  z-index: 10000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
+.spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--primary-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
 
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--dark-color);
+  color: white;
+  padding: 12px 20px;
+  font-size: 14px;
+  z-index: 1000;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+}
 
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
+footer a {
+  color: white;
+  transition: color 0.3s;
+}
 
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
+footer a:hover {
+  color: var(--info-color);
+  text-decoration: underline;
+}
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
+#activityInfo {
+  font-weight: 500;
+}
 
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 14px;
-        }
+.text-info {
+  color: var(--info-color) !important;
+}
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
+@media (max-width: 576px) {
+  footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  .text-end {
+    text-align: center !important;
+  }
+}
 
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            color: #333;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid #dee2e6;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6c757d;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .close-btn:hover {
-            background: #f8f9fa;
-        }
-
-        /* Status Messages */
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert.active {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        /* Loading Indicator */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 30px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .nav-tabs {
-                flex-wrap: wrap;
-            }
-            
-            .tab {
-                flex: 1 0 120px;
-                padding: 12px;
-                font-size: 14px;
-            }
-            
-            .tab-content {
-                padding: 20px;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .action-buttons {
-                flex-wrap: wrap;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .data-table th,
-            .data-table td {
-                padding: 8px 10px;
-                font-size: 14px;
-            }
-            
-            .modal-content {
-                width: 95%;
-                margin: 10px;
-            }
-        }
-
-        /* Utility Classes */
-        .text-center {
-            text-align: center;
-        }
-        
-        .mb-3 {
-            margin-bottom: 1rem;
-        }
-        
-        .mt-3 {
-            margin-top: 1rem;
-        }
-        
-        .d-none {
-            display: none;
-        }
-        
-        .d-flex {
-            display: flex;
-        }
-        
-        .justify-between {
-            justify-content: space-between;
-        }
-        
-        .align-center {
-            align-items: center;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+/* Responsive */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 10px;
+  }
+  
+  .btn-action {
+    width: 100%;
+    margin: 5px 0;
+  }
+  
+  .modal-body .col-md-6 {
+    margin-bottom: 15px;
+  }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-database"></i> Data Management System</h1>
-            <p>Kelola data dengan mudah dan efisien</p>
-        </div>
 
-        <div class="nav-tabs">
-            <button class="tab active" onclick="switchTab('view')">
-                <i class="fas fa-table"></i> Lihat Data
-            </button>
-            <button class="tab" onclick="switchTab('create')">
-                <i class="fas fa-plus-circle"></i> Tambah Data
-            </button>
-            <button class="tab" onclick="switchTab('dropdown')">
-                <i class="fas fa-list"></i> Data Dropdown
-            </button>
-        </div>
-
-        <!-- Status Messages -->
-        <div id="message" class="alert"></div>
-
-        <!-- Loading Indicator -->
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-            <p>Memuat data...</p>
-        </div>
-
-        <!-- View Data Tab -->
-        <div id="view-tab" class="tab-content active">
-            <div class="d-flex justify-between align-center mb-3">
-                <h2><i class="fas fa-table"></i> Data Tersimpan</h2>
-                <button class="btn btn-primary" onclick="loadData()">
-                    <i class="fas fa-sync-alt"></i> Refresh Data
-                </button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="data-table">
-                    <thead>
-                        <tr>
-                            <!-- Table headers will be populated by JavaScript -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Table rows will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Create Data Tab -->
-        <div id="create-tab" class="tab-content">
-            <h2><i class="fas fa-plus-circle"></i> Tambah Data Baru</h2>
-            <p class="mb-3">Isi formulir di bawah ini untuk menambahkan data baru</p>
-            
-            <div class="form-container">
-                <form id="create-form" onsubmit="return false;">
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="ID">ID *</label>
-                                <input type="text" id="ID" class="form-control" required>
-                                <small>ID akan otomatis dibuat jika dikosongkan</small>
-                            </div>
-                        </div>
-                        <!-- Dynamic form fields will be added here by JavaScript -->
-                    </div>
-                    <div class="d-flex justify-between mt-3">
-                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                            <i class="fas fa-redo"></i> Reset Form
-                        </button>
-                        <button type="submit" class="btn btn-success" onclick="submitForm()">
-                            <i class="fas fa-save"></i> Simpan Data
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Dropdown Data Tab -->
-        <div id="dropdown-tab" class="tab-content">
-            <div class="d-flex justify-between align-center mb-3">
-                <h2><i class="fas fa-list"></i> Data Dropdown</h2>
-                <button class="btn btn-primary" onclick="loadDropdownData()">
-                    <i class="fas fa-sync-alt"></i> Refresh
-                </button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="dropdown-table">
-                    <thead>
-                        <tr>
-                            <!-- Dropdown headers will be populated by JavaScript -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Dropdown rows will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="app-container">
+  <div class="app-header">
+    <div class="header-text">
+      <h1 class="h3 mb-0">WebApp TPP Kab. Konawe</h1>
+      <p class="mb-0">Data Koperasi Merah Putih Desa / Kelurahan</p>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus</h3>
-                <button class="close-btn" onclick="closeModal('delete-modal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus data ini?</p>
-                <p><strong>ID:</strong> <span id="delete-id"></span></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('delete-modal')">
-                    <i class="fas fa-times"></i> Batal
-                </button>
-                <button class="btn btn-danger" onclick="confirmDelete()">
-                    <i class="fas fa-trash"></i> Hapus
-                </button>
-            </div>
-        </div>
+    <div class="header-logos">
+      <img src="LogoKemendesa.png" alt="Logo Kemendesa" class="logo">
+      <img src="LogoKemenKop.png" alt="Logo KemenKop" class="logo">
+      <img src="LogoKopindoBaru.png" alt="Logo Kopindo" class="logo">
+      <img src="logoKDKMP1.png" alt="Logo KDKMP" class="logo">
     </div>
+  </div>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-edit"></i> Edit Data</h3>
-                <button class="close-btn" onclick="closeModal('edit-modal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="edit-form" onsubmit="return false;">
-                    <!-- Dynamic edit form fields will be added here by JavaScript -->
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('edit-modal')">
-                    <i class="fas fa-times"></i> Batal
-                </button>
-                <button class="btn btn-success" onclick="submitEdit()">
-                    <i class="fas fa-save"></i> Simpan Perubahan
-                </button>
-            </div>
-        </div>
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>KDKMP Prov. SulTra</span>
+      <div class="btn-group">
+        <button id="btnAdd" class="btn btn-primary btn-action">
+          <i class="fas fa-plus me-1"></i> Tambah Data
+        </button>
+        <button id="btnSync" class="btn btn-success btn-action">
+          <i class="fas fa-sync-alt me-1"></i> Sinkronisasi
+        </button>
+      </div>
     </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="tblData" class="table table-hover table-striped">
+          <thead id="tblHead"></thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script>
-        // Global variables
-        let currentData = [];
-        let currentFields = [];
-        let headers = [];
-        let dataToDelete = null;
-        let dataToEdit = null;
+<!-- Modal Form -->
+<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Form Data</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="modalFields" class="row"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnDelete" class="btn btn-danger" style="display: none;">
+          <i class="fas fa-trash me-1"></i> Hapus
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button id="btnSave" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Spinner -->
+<div id="spinnerOverlay">
+  <div class="spinner"></div>
+</div>
+
+<footer class="d-flex justify-content-between align-items-center">
+  <div class="d-flex align-items-center">
+    <i class="fas fa-info-circle me-2 text-info"></i>
+    <span id="activityInfo">Memuat aplikasi...</span>
+  </div>
+  
+  <div class="text-end">
+    <small>
+      <i class="fas fa-building me-1"></i> CRUD-API.App 
+      <a href="https://karyamandiri.com" target="_blank" class="text-decoration-none text-white">&copy; 2025 AinCodeLab <b>Karya Mandiri</b></a><br>
+      <i class="fas fa-user me-1"></i> Build by 
+      <a href="https://ainularif.karyamandiri.com" target="_blank" class="text-decoration-none text-white">
+        Ainul Arif
+      </a> &mdash; <i class="fas fa-id-badge me-1"></i> PLD-TPP.740228<br>
+      <i class="fas fa-envelope me-1"></i> 
+      <a href="mailto:aynularyf@gmail.com" class="text-decoration-none text-white">aynularyf@gmail.com</a>
+    </small>
+  </div>
+</footer>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+/* ---------- Konfigurasi ---------- */
+// Ganti dengan URL Web App Anda setelah deploy
+const API_URL = "https://script.google.com/macros/s/AKfycbwMG2DZncPXNTEgbjUOjGBWW6A3bJCcPdr7Ar_8IHTUQlPkWcpBg2AASch5oDRRXfCP/exec"; // Ganti dengan URL Anda
+
+const DB_NAME = "crudDB";
+const STORE_NAME = "records";
+let db, headerFields = [], lastRowFields = [], dropdownData = {}, editingId = null;
+let dataTable;
+
+/* ---------- Spinner & Activity ---------- */
+function showSpinner(show = true) {
+  const spinner = document.getElementById('spinnerOverlay');
+  spinner.style.display = show ? 'flex' : 'none';
+  document.body.style.pointerEvents = show ? 'none' : 'auto';
+}
+
+function setActivity(msg) {
+  document.getElementById('activityInfo').textContent = msg;
+  console.log(msg);
+}
+
+/* ---------- IndexedDB ---------- */
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    
+    req.onupgradeneeded = function(e) {
+      db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
+        store.createIndex("status", "status", { unique: false });
+      }
+    };
+    
+    req.onsuccess = function(e) {
+      db = e.target.result;
+      resolve(db);
+    };
+    
+    req.onerror = function(e) {
+      console.error("IndexedDB error:", e.target.error);
+      reject(e.target.error);
+    };
+  });
+}
+
+function getAllFromDB() {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], "readonly");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+    
+    request.onsuccess = function() {
+      resolve(request.result);
+    };
+    
+    request.onerror = function() {
+      reject(request.error);
+    };
+  });
+}
+
+function saveToDB(data) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.put(data);
+    
+    request.onsuccess = function() {
+      resolve();
+    };
+    
+    request.onerror = function() {
+      reject(request.error);
+    };
+  });
+}
+
+function deleteFromDB(id) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.delete(id);
+    
+    request.onsuccess = function() {
+      resolve();
+    };
+    
+    request.onerror = function() {
+      reject(request.error);
+    };
+  });
+}
+
+/* ---------- API Calls ---------- */
+async function fetchData(action, payload = null, id = null) {
+  const body = { action };
+  if (payload) body.payload = payload;
+  if (id) body.id = id;
+  
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(body)
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("API Error:", error);
+    return { status: "error", message: "Gagal terhubung ke server" };
+  }
+}
+
+/* ---------- Dropdown ---------- */
+async function loadDropdown() {
+  const result = await fetchData("dropdown");
+  if (result.status === "success" && result.fields && result.records) {
+    const headers = result.fields[0];
+    result.records.forEach(record => {
+      Object.keys(record).forEach(key => {
+        if (record[key]) {
+          dropdownData[key] = dropdownData[key] || new Set();
+          dropdownData[key].add(record[key]);
+        }
+      });
+    });
+    
+    // Convert Set to Array
+    for (const key in dropdownData) {
+      dropdownData[key] = Array.from(dropdownData[key]);
+    }
+  }
+}
+
+/* ---------- Header Table ---------- */
+function buildMergedHeader(fields) {
+  const thead = document.getElementById("tblHead");
+  thead.innerHTML = "";
+  
+  // Create header rows
+  fields.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+    
+    row.forEach((cell, colIndex) => {
+      if (cell) {
+        const th = document.createElement("th");
+        th.textContent = cell;
         
-        // Apps Script Web App URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwMG2DZncPXNTEgbjUOjGBWW6A3bJCcPdr7Ar_8IHTUQlPkWcpBg2AASch5oDRRXfCP/exec'; // Ganti dengan URL Web App Anda
+        // Calculate rowspan
+        let rowspan = 1;
+        for (let i = rowIndex + 1; i < fields.length; i++) {
+          if (!fields[i][colIndex]) rowspan++;
+          else break;
+        }
         
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
+        // Calculate colspan
+        let colspan = 1;
+        for (let i = colIndex + 1; i < row.length; i++) {
+          if (!row[i]) colspan++;
+          else break;
+        }
+        
+        if (rowspan > 1) th.rowSpan = rowspan;
+        if (colspan > 1) th.colSpan = colspan;
+        
+        tr.appendChild(th);
+      }
+    });
+    
+    thead.appendChild(tr);
+  });
+}
+
+/* ---------- Render Table ---------- */
+async function renderTable() {
+  showSpinner(true);
+  setActivity("Memuat data...");
+  
+  try {
+    // Load data from API
+    const result = await fetchData("read");
+    
+    if (result.status === "success" && result.fields && result.records) {
+      headerFields = result.fields;
+      lastRowFields = headerFields[headerFields.length - 1];
+      
+      // Clear and save to IndexedDB
+      await initDB();
+      
+      // Save records to IndexedDB
+      for (const record of result.records) {
+        await saveToDB({ ...record, sync: true });
+      }
+      
+      // Build table
+      buildMergedHeader(headerFields);
+      const tbody = document.getElementById("tblBody");
+      tbody.innerHTML = "";
+      
+      // Get data from IndexedDB
+      const localData = await getAllFromDB();
+      
+      localData.forEach(record => {
+        const tr = document.createElement("tr");
+        tr.setAttribute("data-id", record.id || record.ID);
+        
+        lastRowFields.forEach(field => {
+          const td = document.createElement("td");
+          td.textContent = record[field] || "";
+          tr.appendChild(td);
         });
         
-        // Tab switching function
-        function switchTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Deactivate all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            
-            // Activate selected tab
-            event.target.classList.add('active');
+        tr.addEventListener("click", () => openModal(record.id || record.ID, record));
+        tbody.appendChild(tr);
+      });
+      
+      // Initialize DataTables
+      if ($.fn.DataTable.isDataTable('#tblData')) {
+        dataTable.destroy();
+      }
+      
+      dataTable = $('#tblData').DataTable({
+        pageLength: 10,
+        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]],
+        language: {
+          search: "Cari:",
+          lengthMenu: "Tampilkan _MENU_ data",
+          info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+          paginate: {
+            first: "Pertama",
+            last: "Terakhir",
+            next: "Lanjut",
+            previous: "Sebelum"
+          }
         }
-        
-        // Show loading indicator
-        function showLoading() {
-            document.getElementById('loading').classList.add('active');
+      });
+    } else {
+      throw new Error(result.message || "Gagal memuat data");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Gagal memuat data: " + error.message);
+  } finally {
+    showSpinner(false);
+    setActivity("Aplikasi siap digunakan");
+  }
+}
+
+/* ---------- Modal Functions ---------- */
+function openModal(id = null, data = null) {
+  editingId = id;
+  document.getElementById("modalTitle").textContent = id ? "Edit Data" : "Tambah Data";
+  document.getElementById("btnDelete").style.display = id ? "block" : "none";
+  
+  const fieldsContainer = document.getElementById("modalFields");
+  fieldsContainer.innerHTML = "";
+  
+  lastRowFields.forEach((field, index) => {
+    const fieldName = headerFields.map(row => row[index]).filter(Boolean).join(" / ");
+    
+    const colDiv = document.createElement("div");
+    colDiv.className = "col-md-6 mb-3";
+    
+    const label = document.createElement("label");
+    label.className = "form-label";
+    label.textContent = fieldName;
+    label.htmlFor = field;
+    
+    let input;
+    const value = data ? (data[field] || "") : "";
+    
+    if (dropdownData[field]) {
+      input = document.createElement("select");
+      input.className = "form-select";
+      input.id = field;
+      
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "-- Pilih --";
+      input.appendChild(defaultOption);
+      
+      dropdownData[field].forEach(option => {
+        const opt = document.createElement("option");
+        opt.value = option;
+        opt.textContent = option;
+        if (value === option) opt.selected = true;
+        input.appendChild(opt);
+      });
+    } else {
+      input = document.createElement("input");
+      input.type = "text";
+      input.className = "form-control";
+      input.id = field;
+      input.value = value;
+    }
+    
+    colDiv.appendChild(label);
+    colDiv.appendChild(input);
+    fieldsContainer.appendChild(colDiv);
+  });
+  
+  const modal = new bootstrap.Modal(document.getElementById('dataModal'));
+  modal.show();
+}
+
+async function saveData() {
+  showSpinner(true);
+  setActivity("Menyimpan data...");
+  
+  try {
+    const formData = {};
+    lastRowFields.forEach(field => {
+      const element = document.getElementById(field);
+      if (element) {
+        formData[field] = element.value;
+      }
+    });
+    
+    let result;
+    if (editingId) {
+      result = await fetchData("update", formData, editingId);
+    } else {
+      result = await fetchData("create", formData);
+    }
+    
+    if (result.status === "success") {
+      // Save to IndexedDB
+      const recordToSave = { ...formData, id: editingId || result.id, sync: false };
+      await saveToDB(recordToSave);
+      
+      // Reload table
+      await renderTable();
+      
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('dataModal'));
+      modal.hide();
+      
+      alert("Data berhasil disimpan!");
+    } else {
+      throw new Error(result.message || "Gagal menyimpan data");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Gagal menyimpan data: " + error.message);
+  } finally {
+    showSpinner(false);
+  }
+}
+
+async function deleteData() {
+  if (!confirm("Yakin ingin menghapus data ini?")) return;
+  
+  showSpinner(true);
+  setActivity("Menghapus data...");
+  
+  try {
+    const result = await fetchData("delete", null, editingId);
+    
+    if (result.status === "success") {
+      // Delete from IndexedDB
+      await deleteFromDB(editingId);
+      
+      // Reload table
+      await renderTable();
+      
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('dataModal'));
+      modal.hide();
+      
+      alert("Data berhasil dihapus!");
+    } else {
+      throw new Error(result.message || "Gagal menghapus data");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Gagal menghapus data: " + error.message);
+  } finally {
+    showSpinner(false);
+  }
+}
+
+async function syncData() {
+  showSpinner(true);
+  setActivity("Sinkronisasi data...");
+  
+  try {
+    // Get unsynced data from IndexedDB
+    const allData = await getAllFromDB();
+    const unsyncedData = allData.filter(item => !item.sync);
+    
+    for (const data of unsyncedData) {
+      let result;
+      
+      if (data.status === "delete") {
+        result = await fetchData("delete", null, data.id);
+      } else if (data.id && data.id.startsWith("ID")) {
+        // New data
+        const { id, sync, status, ...payload } = data;
+        result = await fetchData("create", payload);
+        if (result.status === "success") {
+          // Update local ID with server ID
+          await deleteFromDB(id);
+          await saveToDB({ ...payload, id: result.id, sync: true });
         }
-        
-        // Hide loading indicator
-        function hideLoading() {
-            document.getElementById('loading').classList.remove('active');
+      } else {
+        // Update existing data
+        const { sync, status, ...payload } = data;
+        result = await fetchData("update", payload, data.id);
+        if (result.status === "success") {
+          await saveToDB({ ...data, sync: true });
         }
-        
-        // Show message
-        function showMessage(message, type = 'success') {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = message;
-            messageDiv.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
-            messageDiv.classList.add('active');
-            
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                messageDiv.classList.remove('active');
-            }, 5000);
-        }
-        
-        // Close modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-        
-        // Open modal
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-        
-        // Load main data
-        async function loadData() {
-            showLoading();
-            try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'read'
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    currentData = result.records;
-                    currentFields = result.fields;
-                    headers = result.fields[result.fields.length - 1]; // Get last header row
-                    displayData();
-                    populateCreateForm();
-                    showMessage('Data berhasil dimuat', 'success');
-                } else {
-                    showMessage('Gagal memuat data: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showMessage('Terjadi kesalahan: ' + error.message, 'error');
-                console.error('Error:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Display data in table
-        function displayData() {
-            const tableHead = document.querySelector('#data-table thead tr');
-            const tableBody = document.querySelector('#data-table tbody');
-            
-            // Clear existing content
-            tableHead.innerHTML = '';
-            tableBody.innerHTML = '';
-            
-            // Create headers
-            headers.forEach((header, index) => {
-                if (header) {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    tableHead.appendChild(th);
-                }
-            });
-            
-            // Add action header
-            const actionHeader = document.createElement('th');
-            actionHeader.textContent = 'Aksi';
-            tableHead.appendChild(actionHeader);
-            
-            // Create rows
-            currentData.forEach((row, rowIndex) => {
-                const tr = document.createElement('tr');
-                
-                headers.forEach((header, colIndex) => {
-                    const td = document.createElement('td');
-                    td.textContent = row[colIndex] || '';
-                    tr.appendChild(td);
-                });
-                
-                // Add action buttons
-                const actionTd = document.createElement('td');
-                actionTd.className = 'action-buttons';
-                
-                const editBtn = document.createElement('button');
-                editBtn.className = 'btn btn-warning btn-sm';
-                editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                editBtn.title = 'Edit';
-                editBtn.onclick = () => openEditModal(row[0], row);
-                
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'btn btn-danger btn-sm';
-                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                deleteBtn.title = 'Hapus';
-                deleteBtn.onclick = () => openDeleteModal(row[0]);
-                
-                actionTd.appendChild(editBtn);
-                actionTd.appendChild(deleteBtn);
-                tr.appendChild(actionTd);
-                
-                tableBody.appendChild(tr);
-            });
-        }
-        
-        // Populate create form with dynamic fields
-        function populateCreateForm() {
-            const formRow = document.querySelector('#create-form .form-row');
-            
-            // Clear existing dynamic fields (keep ID field)
-            const existingFields = formRow.querySelectorAll('.form-col:not(:first-child)');
-            existingFields.forEach(field => field.remove());
-            
-            // Create fields for each header (skip first one if it's ID)
-            headers.forEach((header, index) => {
-                if (index !== 0 && header) { // Skip ID column if it's first
-                    const formCol = document.createElement('div');
-                    formCol.className = 'form-col';
-                    
-                    const formGroup = document.createElement('div');
-                    formGroup.className = 'form-group';
-                    
-                    const label = document.createElement('label');
-                    label.htmlFor = header;
-                    label.textContent = header;
-                    
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.id = `field_${index}`;
-                    input.name = header;
-                    input.className = 'form-control';
-                    
-                    formGroup.appendChild(label);
-                    formGroup.appendChild(input);
-                    formCol.appendChild(formGroup);
-                    formRow.appendChild(formCol);
-                }
-            });
-        }
-        
-        // Reset create form
-        function resetForm() {
-            document.getElementById('create-form').reset();
-            showMessage('Formulir telah direset', 'success');
-        }
-        
-        // Submit create form
-        async function submitForm() {
-            showLoading();
-            
-            try {
-                // Collect form data
-                const formData = {};
-                
-                // Get ID field
-                const idField = document.getElementById('ID');
-                if (idField.value.trim()) {
-                    formData[headers[0]] = idField.value.trim();
-                }
-                
-                // Get other fields
-                headers.forEach((header, index) => {
-                    if (index !== 0 && header) {
-                        const input = document.getElementById(`field_${index}`);
-                        if (input && input.value.trim()) {
-                            formData[header] = input.value.trim();
-                        }
-                    }
-                });
-                
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'create',
-                        payload: formData
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showMessage('Data berhasil ditambahkan', 'success');
-                    resetForm();
-                    loadData();
-                    switchTab('view');
-                } else {
-                    showMessage('Gagal menambahkan data: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showMessage('Terjadi kesalahan: ' + error.message, 'error');
-                console.error('Error:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Open delete confirmation modal
-        function openDeleteModal(id) {
-            dataToDelete = id;
-            document.getElementById('delete-id').textContent = id;
-            openModal('delete-modal');
-        }
-        
-        // Confirm and execute delete
-        async function confirmDelete() {
-            showLoading();
-            
-            try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'delete',
-                        id: dataToDelete
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showMessage('Data berhasil dihapus', 'success');
-                    loadData();
-                    closeModal('delete-modal');
-                } else {
-                    showMessage('Gagal menghapus data: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showMessage('Terjadi kesalahan: ' + error.message, 'error');
-                console.error('Error:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Open edit modal
-        function openEditModal(id, rowData) {
-            dataToEdit = { id, rowData };
-            
-            const editForm = document.getElementById('edit-form');
-            editForm.innerHTML = '';
-            
-            // Create form fields based on headers
-            headers.forEach((header, index) => {
-                const formGroup = document.createElement('div');
-                formGroup.className = 'form-group';
-                
-                const label = document.createElement('label');
-                label.htmlFor = `edit_${header}`;
-                label.textContent = header;
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = `edit_${header}`;
-                input.name = header;
-                input.className = 'form-control';
-                input.value = rowData[index] || '';
-                
-                // Make ID field read-only
-                if (index === 0) {
-                    input.readOnly = true;
-                    input.style.backgroundColor = '#f8f9fa';
-                }
-                
-                formGroup.appendChild(label);
-                formGroup.appendChild(input);
-                editForm.appendChild(formGroup);
-            });
-            
-            openModal('edit-modal');
-        }
-        
-        // Submit edit form
-        async function submitEdit() {
-            showLoading();
-            
-            try {
-                // Collect form data
-                const formData = {};
-                const editForm = document.getElementById('edit-form');
-                const inputs = editForm.querySelectorAll('input');
-                
-                inputs.forEach(input => {
-                    formData[input.name] = input.value.trim();
-                });
-                
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'update',
-                        id: dataToEdit.id,
-                        payload: formData
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showMessage('Data berhasil diperbarui', 'success');
-                    loadData();
-                    closeModal('edit-modal');
-                } else {
-                    showMessage('Gagal memperbarui data: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showMessage('Terjadi kesalahan: ' + error.message, 'error');
-                console.error('Error:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Load dropdown data
-        async function loadDropdownData() {
-            showLoading();
-            try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'dropdown'
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    displayDropdownData(result.fields, result.records);
-                    showMessage('Data dropdown berhasil dimuat', 'success');
-                } else {
-                    showMessage('Gagal memuat data dropdown: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showMessage('Terjadi kesalahan: ' + error.message, 'error');
-                console.error('Error:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Display dropdown data
-        function displayDropdownData(fields, records) {
-            const tableHead = document.querySelector('#dropdown-table thead tr');
-            const tableBody = document.querySelector('#dropdown-table tbody');
-            
-            // Clear existing content
-            tableHead.innerHTML = '';
-            tableBody.innerHTML = '';
-            
-            // Get headers from last row of fields (similar to main data)
-            const dropdownHeaders = fields[fields.length - 1];
-            
-            // Create headers
-            dropdownHeaders.forEach(header => {
-                if (header) {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    tableHead.appendChild(th);
-                }
-            });
-            
-            // Create rows
-            records.forEach(row => {
-                const tr = document.createElement('tr');
-                
-                dropdownHeaders.forEach((header, index) => {
-                    const td = document.createElement('td');
-                    td.textContent = row[index] || '';
-                    tr.appendChild(td);
-                });
-                
-                tableBody.appendChild(tr);
-            });
-        }
-    </script>
+      }
+    }
+    
+    // Reload from server to get latest data
+    await renderTable();
+    alert("Sinkronisasi berhasil!");
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Gagal sinkronisasi: " + error.message);
+  } finally {
+    showSpinner(false);
+  }
+}
+
+/* ---------- Initialize App ---------- */
+document.addEventListener('DOMContentLoaded', async function() {
+  // Event Listeners
+  document.getElementById("btnAdd").addEventListener("click", () => openModal());
+  document.getElementById("btnSave").addEventListener("click", saveData);
+  document.getElementById("btnDelete").addEventListener("click", deleteData);
+  document.getElementById("btnSync").addEventListener("click", syncData);
+  
+  // Initialize
+  showSpinner(true);
+  try {
+    await initDB();
+    await loadDropdown();
+    await renderTable();
+  } catch (error) {
+    console.error("Initialization error:", error);
+    alert("Gagal menginisialisasi aplikasi: " + error.message);
+  } finally {
+    showSpinner(false);
+  }
+});
+</script>
 </body>
 </html>
