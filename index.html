@@ -1,985 +1,707 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KDKMP TPP Sultra</title>
-<link rel="icon" type="image/x-icon" href="word.png">
-<!-- <script> const underConstruction = true; window.onload = function() { if (underConstruction) { window.location.href = "underConstruction.html";}};</script> -->
-<!--  <script> const underConstruction = true; window.onload = function() { if (underConstruction) { window.location.href = "https://merahputih.kop.id";}};</script> -->
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/7/76/Logo_Kementerian_Desa_dan_Pembangunan_Daerah_Tertinggal_Republik_Indonesia_%282024%29.svg">
+    <title>Database CRUD Spreadsheet (Auto Title)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --header-bg: #f8fafc;
+            --sticky-header-bg: #f1f5f9;
+        }
 
-<style>
-  :root {
-    --primary-color: #8ccaf3;
-    --secondary-color: #1e56f0;
-    --accent-color: #e74c3c;
-    --light-color: #f8f9fa;
-    --dark-color: #2c3e50;
-    --info-color: #3498db; /* warna ikon info */
-  }
-  
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7f9;
-    padding-bottom: 70px;
-  }
-  
-.app-header {
-  display: flex;
-  justify-content: space-between;  /* Desktop: teks kiri – logo kanan */
-  align-items: center;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-  position: relative;
-  color: #fff;
-}
-
-.app-header::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.05));
-  border-radius: 12px;
-  pointer-events: none;
-}
-
-/* ===== Logo ===== */
-.header-logos {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.header-logos .logo {
-  height: 80px;
-  width: auto;
-  border-radius: 8px;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-.header-logos .logo:hover { opacity: 1; }
-
-/* ===== Teks ===== */
-.header-text {
-  z-index: 1;
-  text-align: left; /* Desktop: kiri */
-}
-.header-text h1,
-.header-text p {
-  margin: 0;
-  color: #fff;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
-}
-
-/* ===== Tablet & Handphone: sembunyikan logo ===== */
-@media (max-width: 768px) {
-  .header-logos { display: none; }    /* logo hilang */
-  .app-header {
-    justify-content: center;          /* teks center */
-    text-align: center;
-  }
-  .header-text { text-align: center; }
-  .header-text h1 { font-size: 1.5rem; }
-  .header-text p  { font-size: 1rem; }
-}
-
-@media (max-width: 480px) {
-  .app-header { padding: 15px; }
-  .header-text h1 { font-size: 1.2rem; }
-  .header-text p  { font-size: 0.9rem; }
-}
-
-.card {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-    border: none;
-  }
-  
-  .card-header {
-    background-color: white;
-    border-bottom: 1px solid #eaeaea;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-    font-weight: 600;
-    padding: 15px 20px;
-  }
-  
-  .btn-action {
-    margin: 5px;
-    border-radius: 6px;
-    font-weight: 500;
-  }
-  
-  /* Tabel Styles */
-  #tblData {
-    width: 100% !important;
-    border-collapse: separate;
-    border-spacing: 0;
-  }
-  thead {
-    background: linear-gradient(135deg, #3498db, #2c3e50);
-    color: white;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-  }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         
-  #tblData th {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-    font-weight: 600;
-    text-align: center;
-    vertical-align: middle;
-    padding: 12px 10px;
-    position: sticky;
-    top: 0;
-  }
-  
-  #tblData td {
-    padding: 10px;
-    vertical-align: middle;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-  }
-  
-  #tblData tbody tr {
-    transition: background-color 0.2s;
-  }
-  
-  #tblData tbody tr:hover {
-    background-color: rgba(52, 152, 219, 0.1);
-    cursor: pointer;
-  }
-  
-  /* Highlight untuk baris yang baru diubah */
-  .row-highlight {
-    animation: highlight 2s ease;
-  }
-  
-  @keyframes highlight {
-    0% { background-color: rgba(76, 175, 80, 0.3); }
-    100% { background-color: transparent; }
-  }
-  
-  /* Modal Styles */
-  .modal-content {
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  }
-  
-  .modal-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    padding: 15px 20px;
-  }
-  
-  .modal-body {
-    padding: 20px;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-  }
-  
-  .modal-footer {
-    border-top: 1px solid #eaeaea;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* shadow agar jelas */
-    padding: 15px 20px;
-  }
-  
-  .form-label {
-    font-weight: 600;
-    color: var(--secondary-color);
-    margin-bottom: 5px;
-  }
-  
-  .form-control, .form-select {
-    border-radius: 6px;
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  .form-control:focus, .form-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-  }
-  
-  /* Spinner Overlay */
-  #spinnerOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255,255,255,0.9);
-    z-index: 10000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: auto;
-  }
-  
-  .spinner {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid var(--primary-color);
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    100% { transform: rotate(360deg); }
-  }
-  
-  /* Footer */
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--dark-color);
-    color: white;
-    text-shadow: 2px 2px 6px rgba(231, 228, 20, 0.404); /* shadow agar jelas */
-    padding: 12px 20px;
-    font-size: 14px;
-    z-index: 1000;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
-  }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 20px; }
 
-  footer a {
-    color: white;
-    transition: color 0.3s;
-  }
+        /* --- Layout --- */
+        .container { max-width: 98%; margin: 0 auto; background: var(--bg-card); border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; display: flex; flex-direction: column; height: 90vh; }
+        
+        header { padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; background: #fff; }
+        .header-title h1 { font-size: 1.25rem; font-weight: 600; color: var(--text-main); margin: 0; }
+        
+        /* Controls Bar */
+        .controls-bar { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; background: #f8fafc; }
+        
+        .search-box { position: relative; flex: 1; min-width: 250px; max-width: 400px; }
+        .search-box input {
+            width: 100%; padding: 8px 12px 8px 35px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; outline: none;
+        }
+        .search-box input:focus { border-color: var(--primary); }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
 
-  footer a:hover {
-    color: var(--info-color);
-    text-decoration: underline;
-  }
+        .pagination-controls { display: flex; gap: 10px; align-items: center; }
+        .pagination-controls select {
+            padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;
+        }
+        .btn {
+            padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+        .btn-secondary { background: #e5e7eb; color: var(--text-main); }
+        .btn-secondary:hover:not(:disabled) { background: #d1d5db; }
 
-    #activityInfo {
-    font-weight: 500;
-  }
+        /* --- Table Area --- */
+        .table-wrapper { flex: 1; overflow: auto; position: relative; border-top: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; table-layout: auto; }
+        
+        th, td { 
+            border: 1px solid var(--border); 
+            padding: 10px 12px; 
+            font-size: 0.85rem; 
+            vertical-align: middle;
+        }
 
-  .text-info {
-    color: var(--info-color) !important;
-  }
+        /* --- HEADER STYLING UPDATE --- */
+        /* Style dasar untuk semua header (tidak sticky) */
+        th { 
+            background: var(--header-bg); 
+            font-weight: 600; 
+            white-space: normal; 
+            text-align: center;  
+            vertical-align: middle; 
+            min-width: 120px;
+            max-width: 300px;
+            line-height: 1.4;
+            color: var(--text-main);
+            /* Hapus sticky global di sini agar baris 1-4 ikut scroll */
+        }
 
-  @media (max-width: 576px) {
-    footer {
-      flex-direction: column;
-      text-align: center;
-      gap: 8px;
-    }
-    .text-end {
-      text-align: center !important;
-    }
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .app-container {
-      padding: 10px;
-    }
-    
-    .btn-action {
-      width: 100%;
-      margin: 5px 0;
-    }
-    
-    .modal-body .col-md-6 {
-      margin-bottom: 15px;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate {
-      margin-top: 10px !important;
-    }
-  }
-</style>
+        /* KHUSUS: Baris terakhir header yang akan sticky */
+        thead tr:last-child th {
+            position: sticky;
+            top: 0;
+            z-index: 20; /* Lebih tinggi dari konten normal */
+            background: var(--sticky-header-bg);
+            border-bottom: 2px solid #94a3b8; /* Border bawah lebih tegas */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Efek melayang */
+        }
+        /* ----------------------------- */
+
+        td { text-align: left; white-space: nowrap; background: #fff; z-index: 1; position: relative; }
+        tr:hover td { background-color: #eff6ff; cursor: pointer; }
+        
+        /* Animation for new row */
+        @keyframes highlight {
+            0% { background-color: #bbf7d0; }
+            100% { background-color: transparent; }
+        }
+        .row-updated { animation: highlight 2s ease-out; }
+
+        .empty-state { padding: 40px; text-align: center; color: var(--text-muted); }
+
+        /* --- Modal --- */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px);
+            display: none; justify-content: center; align-items: center; z-index: 100;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-backdrop.active { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 12px; display: flex; flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.1rem; font-weight: 600; }
+        
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; outline: none; transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); ring: 2px solid var(--primary); }
+        .form-group input:disabled, .form-group select:disabled { background-color: #f3f4f6; cursor: not-allowed; color: #9ca3af; }
+        
+        .modal-footer { padding: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; }
+
+        /* --- Loader --- */
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); z-index: 200; display: none;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        .loader-overlay.active { display: flex; }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Toast --- */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 12px 20px; border-radius: 6px; color: white; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out; }
+        .toast.success { background: #10b981; }
+        .toast.error { background: var(--danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .page-info { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; min-width: 100px; text-align: center; }
+    </style>
 </head>
 <body>
 
-<div class="app-container">
-<div class="app-header">
-  <div class="header-text">
-    <h1 class="h3 mb-0">WebApp TPP Kab. Konawe</h1>
-    <p class="mb-0">Data Koperasi Merah Putih Desa / Kelurahan Merah Putih</p>
-  </div>
-  <div class="header-logos">
-    <img src="LogoKemendesa.png" alt="Logo 1" class="logo">
-    <img src="LogoKemenKop.png" alt="Logo 2" class="logo">
-    <img src="LogoKopindoBaru.png" alt="Logo 3" class="logo">
-    <img src="logoKDKMP1.png" alt="Logo 4" class="logo">
-  </div>
-</div>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <!-- Title diubah agar memiliki ID untuk update otomatis -->
+                <h1 id="sheetTitle">Load...</h1>
+            </div>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Cari data..." onkeyup="handleSearch()">
+            </div>
+            <button disabled hidden class="btn btn-primary" onclick="openModal('create')">+ Tambah Data</button>
+        </header>
+        <div class="table-wrapper">
+            <table id="dataTable">
+                <thead id="tableHead">
+                    <!-- Headers injected via JS -->
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="100" class="empty-state">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Control Bar -->
+        <div class="controls-bar">
+            <div class="pagination-controls">
+                <button class="btn btn-secondary" id="btnPrev" onclick="changePage(-1)">◀️</button> 
+                <div class="page-info" id="pageInfo">Hal 1 / 1</div>
+                <button class="btn btn-secondary" id="btnNext" onclick="changePage(1)">▶️</button>
+                
+                <select id="rowsPerPage" onchange="changeRowsPerPage()">
+                    <option value="10" selected>10 / hal</option>
+                    <option value="20">20 / hal</option>
+                    <option value="50">50 / hal</option>
+                    <option value="100">100 / hal</option>
+                </select>
+            </div>
+        </div>
 
-  <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <span>KDKMP Prov. SulTra</span>
-      <div class="btn-group">
-        <button disabled hidden id="btnAdd" class="btn btn-primary btn-action">
-          <i class="fas fa-plus me-1"></i> Add
-        </button>
-        <button id="btnSync" class="btn btn-success btn-action">
-          <i class="fas fa-sync-alt me-1"></i> Singkron
-        </button>
-        <button disabled hidden id="btnClear" class="btn btn-warning btn-action">
-          <i class="fas fa-broom me-1"></i> Clear
-        </button>
-      </div>
     </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table id="tblData" class="table table-hover table-striped">
-          <thead id="tblHead"></thead>
-          <tbody id="tblBody"></tbody>
-        </table>
-      </div>
+
+    <!-- Modal Form -->
+    <div class="modal-backdrop" id="crudModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Edit Data</div>
+                <button class="btn btn-secondary" onclick="closeModal()" style="padding: 4px 8px;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="crudForm">
+                    <input type="hidden" name="id" id="inputId">
+                    <div class="form-grid" id="formGrid">
+                        <!-- Inputs injected via JS -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button disabled hidden type="button" class="btn btn-danger" id="btnDelete" onclick="deleteData()" style="display: none;">Hapus</button>
+                <div style="flex: 1;"></div>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Simpan</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Form Data</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="modalFields" class="row"></div>
-      </div>
-      <div class="modal-footer">
-        <button disabled hidden id="btnDelete" class="btn btn-danger">
-          <i class="fas fa-trash me-1"></i> Hapus
-        </button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <button id="btnSave" class="btn btn-primary">
-          <i class="fas fa-save me-1"></i> Simpan
-        </button>
-      </div>
+    <!-- Loader -->
+    <div class="loader-overlay" id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 10px; color: #6b7280;">Memproses...</p>
     </div>
-  </div>
-</div>
 
-<!-- Spinner -->
-<div id="spinnerOverlay">
-  <div class="spinner"></div>
-</div>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
-<footer class="d-flex justify-content-between align-items-center">
-  <!-- Bagian kiri: status aplikasi -->
-  <div class="d-flex align-items-center">
-    <i class="fas fa-info-circle me-2 text-info"></i>
-    <span id="activityInfo">Memuat aplikasi...</span>
-  </div>
+    <script>
+        // ===== CONFIGURATION =====
+        const API_URL = "https://script.google.com/macros/s/AKfycbzPOpIHoR_af6jH8B8dkmMgD3IVwUbFIjRGC0A2WxAOOmqbF31MKluHxGwr7NfVEJ4s1A/exec";
 
-  <!-- Bagian kanan: copyright dan pembuat -->
-  <div class="text-end">
-    <small>
-      <i class="fas fa-building me-1"></i> CRUD-API.App 
-      <a href="https://karyamandiri.com" target="_blank" class="text-decoration-none text-white">&copy; 2025 AinCodeLab <b>Karya Mandiri</b></a><br>
-      <i class="fas fa-user me-1"></i> Build by 
-      <a href="https://ainularif.karyamandiri.com" target="_blank" class="text-decoration-none text-white">
-        Ainul Arif
-      </a> &mdash; <i class="fas fa-id-badge me-1"></i> PLD-TPP.740228 <br>
-      <i class="fas fa-envelope me-1"></i> 
-      <a href="mailto:aynularyf@gmail.com" class="text-decoration-none text-white">aynularyf@gmail.com</a>
-    </small>
-  </div>
-</footer>
+        // ===== STATE =====
+        let state = {
+            headers: {},
+            columnLabels: {}, 
+            dropdowns: {},
+            data: [],
+            readonlyCols: [],
+            fileName: '', // Properti baru untuk nama file
+            
+            // Pagination & Search
+            currentPage: 1,
+            rowsPerPage: 20,
+            searchTerm: '',
+            filteredData: []
+        };
 
-<!-- JavaScript Libraries -->
-<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-/* ----------
-Konfigurasi
-https://script.google.com/d/1xDPHcOBWS0k8i6dN2fDxhJ7W7s-qRhyGJH3OtOWCxux95Cdk0caJdqDm/edit?usp=sharing
----------- */
-const API_URL    = "https://script.google.com/macros/s/AKfycbwMG2DZncPXNTEgbjUOjGBWW6A3bJCcPdr7Ar_8IHTUQlPkWcpBg2AASch5oDRRXfCP/exec";
-const DB_NAME    = "crudDB";
-const STORE_NAME = "records";
-let db, headerFields = [], lastRowFields = [], dropdownData = {}, editingId = null;
-let dataTable; // Untuk instance DataTables
-
-// Cache in-memory untuk performa optimal
-let allDataCache = [];
-
-/* ---------- Spinner & Footer ---------- */
-function showSpinner(show=true) {
-  document.getElementById('spinnerOverlay').style.display = show ? 'flex' : 'none';
-  document.body.style.pointerEvents = show ? 'none' : 'auto';
-}
-function setActivity(msg) {
-  document.getElementById('activityInfo').textContent = msg;
-  console.log(msg);
-}
-
-/* ---------- DB ---------- */
-function deleteDatabase() {
-  return new Promise(resolve => {
-    const delReq = indexedDB.deleteDatabase(DB_NAME);
-    delReq.onsuccess = () => { setActivity("Database lama dihapus."); resolve(); };
-    delReq.onerror   = () => { setActivity("Gagal hapus DB lama."); resolve(); };
-    delReq.onblocked = () => { setActivity("Hapus DB ter-blocked."); resolve(); };
-  });
-}
-
-function initDB(initialData) {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 2);
-    req.onupgradeneeded = e => {
-      db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
-        store.createIndex("status", "status", { unique: false });
-      }
-    };
-    req.onsuccess = e => {
-      db = e.target.result;
-      if (initialData) {
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        const store = tx.objectStore(STORE_NAME);
-        initialData.forEach(r => {
-          r.id        ||= r[0] || Date.now().toString();
-          r.status    ||= "";
-          r.ts_create ||= Date.now();
-          r.ts_update ||= Date.now();
-          store.put(r);
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
         });
-        tx.oncomplete = () => resolve();
-      } else resolve();
-    };
-    req.onerror = e => reject(e.target.error);
-  });
-}
 
-function getAllDataFromIndexedDB(filterFn) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const store = tx.objectStore(STORE_NAME);
-    const rq = store.getAll();
-    rq.onsuccess = () => {
-      const result = filterFn ? rq.result.filter(filterFn) : rq.result;
-      resolve(result);
-    };
-    rq.onerror   = () => reject(rq.error);
-  });
-}
+        async function loadData() {
+            showLoader(true);
+            try {
+                // Tambahkan fetchAPI('namefile') ke dalam Promise.all
+                const [headersRes, dropdownsRes, dataRes, nameFileRes] = await Promise.all([
+                    fetchAPI('headers'),
+                    fetchAPI('dropdown'),
+                    fetchAPI('read'),
+                    fetchAPI('namefile') // Panggil API nama file
+                ]);
 
-function saveRecordToIndexedDB(rec) {
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put(rec);
-    tx.oncomplete = () => res();
-    tx.onerror    = () => rej(tx.error);
-  });
-}
+                if (headersRes.success) {
+                    state.headers = headersRes.rows;
+                    processColumnLabels();
+                }
+                if (dropdownsRes.success) state.dropdowns = dropdownsRes.dropdowns || {};
+                if (dataRes.success) {
+                    state.data = dataRes.data;
+                    state.readonlyCols = dataRes.readonly || [];
+                    state.filteredData = state.data;
+                }
+                
+                // Update Judul Halaman
+                if (nameFileRes.success && nameFileRes.name) {
+                    state.fileName = nameFileRes.name;
+                    document.getElementById('sheetTitle').textContent = state.fileName;
+                }
 
-function deleteRecordFromIndexedDB(id) {
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).delete(id);
-    tx.oncomplete = () => res();
-    tx.onerror    = () => rej(tx.error);
-  });
-}
-
-/* ---------- Cache Management ---------- */
-// Update cache dari IndexedDB
-async function refreshCache() {
-  allDataCache = await getAllDataFromIndexedDB(r => r.status !== "delete");
-}
-
-// Cari data di cache
-function findInCache(id) {
-  return allDataCache.find(item => item.id === id);
-}
-
-// Update data di cache
-function updateCache(record) {
-  const index = allDataCache.findIndex(item => item.id === record.id);
-  if (index !== -1) {
-    allDataCache[index] = record;
-  } else {
-    allDataCache.push(record);
-  }
-}
-
-// Hapus data dari cache
-function removeFromCache(id) {
-  const index = allDataCache.findIndex(item => item.id === id);
-  if (index !== -1) {
-    allDataCache.splice(index, 1);
-  }
-}
-
-/* ---------- Dropdown ---------- */
-async function loadDropdown() {
-  setActivity("Memuat data dropdown...");
-  showSpinner(true); // Tampilkan spinner
-  try {
-    const r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "dropdown" }) });
-    const d = await r.json();
-    if (d.fields && d.records) {
-      const dd = d.fields[0];
-      d.records.forEach(row => {
-        row.forEach((val, i) => {
-          const f = dd[i];
-          dropdownData[f] = dropdownData[f] || [];
-          if (val && !dropdownData[f].includes(val)) dropdownData[f].push(val);
-        });
-      });
-    }
-  } catch (error) {
-    console.error("Error loading dropdown:", error);
-    setActivity("Gagal memuat data dropdown.");
-  } finally {
-    showSpinner(false); // Sembunyikan spinner
-  }
-}
-
-/* ---------- Header Table Merge ---------- */
-function buildMergedHeader(fields) {
-  const thead = document.getElementById("tblHead");
-  if (!thead) return; // validasi elemen
-  thead.innerHTML = "";
-
-  const rowCount = fields.length;
-  const colCount = fields[fields.length - 1].length;
-
-  // Hitung rowspan dengan aturan: jika sel di atasnya ada data, jangan merger ke kanan
-  const rowspanMap = Array.from({ length: rowCount }, () => Array(colCount).fill(1));
-
-  for (let r = 0; r < rowCount - 1; r++) {
-    for (let c = 0; c < colCount; c++) {
-      const cell = fields[r][c];
-      // hanya merge ke bawah jika cell ada data dan cell di bawah kosong
-      if (cell && !fields[r + 1][c]) {
-        let span = 1;
-        for (let rr = r + 1; rr < rowCount && !fields[rr][c]; rr++) span++;
-        rowspanMap[r][c] = span;
-        for (let rr = r + 1; rr < r + span; rr++) rowspanMap[rr][c] = 0;
-      }
-    }
-  }
-
-  // Buat baris header
-  for (let r = 0; r < rowCount; r++) {
-    const tr = document.createElement("tr");
-    for (let c = 0; c < colCount; ) {
-      const val = fields[r][c];
-      if (!val || rowspanMap[r][c] === 0) {
-        c++;
-        continue;
-      }
-
-      // Hitung colspan hanya jika semua baris di atas sel ini kosong (agar tidak merger ke kanan jika di atas ada data)
-      let colspan = 1;
-      const canMergeRight = () => {
-        for (let rr = 0; rr < r; rr++) {
-          if (fields[rr][c]) return false;
-        }
-        return true;
-      };
-
-      if (canMergeRight()) {
-        for (let cc = c + 1; cc < colCount && !fields[r][cc]; cc++) {
-          // pastikan semua baris di atas cc kosong juga
-          let upperHasData = false;
-          for (let rr = 0; rr < r; rr++) {
-            if (fields[rr][cc]) {
-              upperHasData = true;
-              break;
+                renderTable();
+            } catch (error) {
+                console.error(error);
+                showToast("Gagal memuat data", "error");
+            } finally {
+                showLoader(false);
             }
-          }
-          if (upperHasData) break;
-          colspan++;
         }
-      }
 
-      const th = document.createElement("th");
-      th.textContent = val;
-      if (colspan > 1) th.colSpan = colspan;
-      if (rowspanMap[r][c] > 1) th.rowSpan = rowspanMap[r][c];
-      tr.appendChild(th);
-      c += colspan;
-    }
-    thead.appendChild(tr);
-  }
-}
-
-/* ---------- Tabel ---------- */
-async function renderTable() {
-  setActivity("Menampilkan data tabel...");
-  
-  // Refresh cache dari IndexedDB
-  await refreshCache();
-  
-  // Hancurkan DataTables instance jika sudah ada
-  if ($.fn.DataTable.isDataTable('#tblData')) {
-    dataTable.destroy();
-    $('#tblData').empty();
-  }
-  
-  const tbody = document.getElementById("tblBody");
-  tbody.innerHTML = "";
-
-  // Build merged header
-  buildMergedHeader(headerFields);
-
-  // Tampilkan body dari cache (lebih cepat)
-  allDataCache.forEach(r => {
-    const tr = createTableRow(r);
-    tbody.appendChild(tr);
-  });
-  
-  // Inisialisasi DataTables
-  dataTable = $('#tblData').DataTable({
-    responsive: true,
-    pageLength: 5, // Menampilkan 5 record per halaman
-    lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]], // Opsi menu
-    language: {
-      search: "Cari:",
-      lengthMenu: "Tampilkan _MENU_ data per halaman",
-      info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-      infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
-      paginate: {
-        first: "Awal",
-        last: "Akhir",
-        next: "lanjut",
-        previous: "Kembali"
-      }
-    }
-  });
-  
-  setActivity("Data siap digunakan.");
-  showSpinner(false); // Sembunyikan spinner setelah render selesai
-}
-
-// Fungsi untuk membuat baris tabel
-function createTableRow(data) {
-  const tr = document.createElement("tr");
-  tr.setAttribute("data-id", data.id);
-  
-  lastRowFields.forEach((f,i) => {
-    const td = document.createElement("td");
-    td.textContent = data[f] ?? data[i] ?? "";
-    tr.appendChild(td);
-  });
-  
-  tr.addEventListener("click", () => openModal(data.id, data));
-  return tr;
-}
-
-// Fungsi untuk memperbarui baris tertentu
-function updateTableRow(id, data) {
-  const row = document.querySelector(`#tblBody tr[data-id="${id}"]`);
-  if (row) {
-    // Perbarui konten baris
-    const cells = row.querySelectorAll("td");
-    lastRowFields.forEach((f, i) => {
-      if (cells[i]) {
-        cells[i].textContent = data[f] ?? data[i] ?? "";
-      }
-    });
-    
-    // Tambahkan efek highlight
-    row.classList.add("row-highlight");
-    setTimeout(() => {
-      row.classList.remove("row-highlight");
-    }, 2000);
-  } else {
-    // Jika baris tidak ditemukan (data baru), tambahkan baris baru
-    const tbody = document.getElementById("tblBody");
-    const newRow = createTableRow(data);
-    tbody.appendChild(newRow);
-    
-    // Refresh DataTables
-    if (dataTable) {
-      dataTable.row.add(newRow).draw();
-    }
-    
-    // Tambahkan efek highlight
-    newRow.classList.add("row-highlight");
-    setTimeout(() => {
-      newRow.classList.remove("row-highlight");
-    }, 2000);
-  }
-}
-
-// Fungsi untuk menghapus baris tertentu
-function removeTableRow(id) {
-  const row = document.querySelector(`#tblBody tr[data-id="${id}"]`);
-  if (row && dataTable) {
-    // Hapus baris dari DataTables
-    dataTable.row(row).remove().draw();
-  }
-}
-
-/* ---------- Modal, CRUD ---------- */
-function showModal(show = true) {
-  const modalElement = document.getElementById('dataModal');
-  const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-  if (show) {
-    modal.show();
-  } else {
-    modal.hide();
-  }
-}
-
-function openModal(id = null, data = null) {
-  editingId = id;
-  setActivity(id ? "Mengedit data..." : "Menambah data...");
-  document.getElementById("modalTitle").textContent = id ? "Edit Data" : "Tambah Data";
-  const cont = document.getElementById("modalFields");
-  cont.innerHTML = "";
-
-  lastRowFields.forEach((f, i) => {
-    const fieldDiv = document.createElement("div");
-    fieldDiv.className = "col-md-6 mb-3";
-    
-    const lbl = document.createElement("label");
-    lbl.className = "form-label";
-    lbl.textContent = headerFields.map(row => row[i]).filter(Boolean).join(" / ");
-    fieldDiv.appendChild(lbl);
-
-    if (dropdownData[f]) {
-      const sel = document.createElement("select");
-      sel.className = "form-select";
-      sel.name = f;
-      
-      const defaultOption = document.createElement("option");
-      defaultOption.value = "";
-      defaultOption.textContent = "-- Pilih --";
-      sel.appendChild(defaultOption);
-      
-      dropdownData[f].forEach(opt => {
-        const op = document.createElement("option");
-        op.value = opt;
-        op.textContent = opt;
-        if (data && (data[f] ?? data[i]) === opt) op.selected = true;
-        sel.appendChild(op);
-      });
-      fieldDiv.appendChild(sel);
-    } else {
-      const inp = document.createElement("input");
-      inp.type = "text";
-      inp.className = "form-control";
-      inp.name = f;
-      inp.value = data ? (data[f] ?? data[i] ?? "") : "";
-      fieldDiv.appendChild(inp);
-    }
-    cont.appendChild(fieldDiv);
-  });
-  
-  document.getElementById("btnDelete").style.display = id ? "block" : "none";
-  showModal(true);
-}
-
-async function hapusData() {
-  if (!editingId) { showModal(false); return; }
-  if (!confirm("Yakin ingin menghapus data?")) return;
-  setActivity("Menghapus data...");
-  showSpinner(true); // Tampilkan spinner
-  
-  try {
-    // Cari data di cache
-    const rec = findInCache(editingId);
-    if (rec) {
-      if (rec.status === "create") {
-        // Hapus dari IndexedDB
-        await deleteRecordFromIndexedDB(rec.id);
-        // Hapus dari cache
-        removeFromCache(rec.id);
-        // Hapus dari UI
-        removeTableRow(rec.id);
-      } else {
-        // Update status di IndexedDB
-        rec.status = "delete";
-        rec.ts_update = Date.now();
-        await saveRecordToIndexedDB(rec);
-        // Hapus dari cache
-        removeFromCache(rec.id);
-        // Hapus dari UI
-        removeTableRow(rec.id);
-      }
-    }
-    showModal(false);
-    setActivity("Data berhasil dihapus.");
-  } catch (error) {
-    console.error("Error deleting data:", error);
-    setActivity("Gagal menghapus data.");
-  } finally {
-    showSpinner(false); // Sembunyikan spinner
-  }
-}
-
-async function simpanData() {
-  setActivity("Menyimpan data...");
-  showSpinner(true); // Tampilkan spinner
-  
-  try {
-    const payload = {};
-    document.querySelectorAll("#modalFields [name]").forEach(el => payload[el.name] = el.value);
-    
-    if (!editingId) {
-      // Data baru
-      payload.id = Date.now().toString();
-      payload.status = "create";
-      payload.ts_create = Date.now();
-      payload.ts_update = Date.now();
-      
-      // Simpan ke IndexedDB
-      await saveRecordToIndexedDB(payload);
-      // Tambahkan ke cache
-      updateCache(payload);
-      // Update UI
-      updateTableRow(payload.id, payload);
-    } else {
-      // Data yang diupdate
-      const old = findInCache(editingId);
-      payload.id = editingId;
-      payload.status = old.status === "create" ? "create" : "update";
-      payload.ts_create = old.ts_create || Date.now();
-      payload.ts_update = Date.now();
-      
-      // Simpan ke IndexedDB
-      await saveRecordToIndexedDB(payload);
-      // Update cache
-      updateCache(payload);
-      // Update UI
-      updateTableRow(editingId, payload);
-    }
-    
-    showModal(false);
-    setActivity("Data berhasil disimpan.");
-  } catch (error) {
-    console.error("Error saving data:", error);
-    setActivity("Gagal menyimpan data.");
-  } finally {
-    showSpinner(false); // Sembunyikan spinner
-  }
-}
-
-/* ---------- Sinkron ---------- */
-async function syncToServer() {
-  if (!confirm("Sinkron semua perubahan ke server?")) return;
-  showSpinner(true);
-  setActivity("Sinkronisasi ke server...");
-  
-  try {
-    // Dapatkan data yang berubah dari cache
-    const changed = allDataCache.filter(r => r.status && r.status !== "");
-    
-    for (const rec of changed) {
-      let body;
-      if (rec.status === "create") body = { action: "create", payload: rec };
-      else if (rec.status === "update") body = { action: "update", id: rec.id, payload: rec };
-      else if (rec.status === "delete") body = { action: "delete", id: rec.id };
-      else continue;
-      
-      try {
-        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(body) });
-        const out = await res.json();
-        if (out.status === "success") {
-          if (rec.status === "delete") {
-            await deleteRecordFromIndexedDB(rec.id);
-            removeFromCache(rec.id);
-            removeTableRow(rec.id);
-          } else { 
-            rec.status = ""; 
-            await saveRecordToIndexedDB(rec);
-            updateCache(rec);
-            updateTableRow(rec.id, rec);
-          }
+        // ===== API HELPER =====
+        async function fetchAPI(action, data = {}) {
+            let url = `${API_URL}?action=${action}`;
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(data)
+            };
+            const response = await fetch(url, options);
+            const result = await response.json();
+            return result;
         }
-      } catch (e) { 
-        console.warn("Error sync", e); 
-        setActivity("Terjadi kesalahan saat sinkronisasi.");
-      }
-    }
-    setActivity("Sinkronisasi selesai.");
-  } catch (error) {
-    console.error("Error during sync:", error);
-    setActivity("Gagal melakukan sinkronisasi.");
-  } finally {
-    showSpinner(false); // Sembunyikan spinner setelah selesai
-  }
-}
 
-/* ---------- Pembersihan ---------- */
-function manualCleaningGuide() {
-  setActivity("Panduan pembersihan ditampilkan.");
-  alert(
-`Langkah Pembersihan Disarankan:
-1️⃣ Hapus IndexedDB (otomatis setiap refresh halaman).
-2️⃣ Hapus Cache Browser: Ctrl+Shift+Del > Cached Images & Files.
-3️⃣ Clear Site Data: F12 > Application > Clear Storage > Clear site data.
+        // ===== LOGIC: LABEL GENERATION =====
+        function processColumnLabels() {
+            const firstRow = state.headers['ROW1'];
+            if (!firstRow) return;
+            const keys = Object.keys(firstRow);
+            const maxCol = parseInt(keys[keys.length - 1].replace('COL', ''), 10);
 
-Untuk file lokal (file://), langkah 2 sudah cukup.`
-  );
-}
+            for (let c = 1; c <= maxCol; c++) {
+                const colKey = `COL${String(c).padStart(3, '0')}`;
+                let headerParts = [];
+                for (let r = 1; r <= 5; r++) {
+                    const rowKey = `ROW${r}`;
+                    if (state.headers[rowKey] && state.headers[rowKey][colKey]) {
+                        const val = state.headers[rowKey][colKey].value;
+                        if (val) headerParts.push(val);
+                    }
+                }
+                const uniqueParts = [...new Set(headerParts)];
+                state.columnLabels[colKey] = uniqueParts.join(" | ");
+            }
+        }
 
-/* ---------- Init ---------- */
-(async function () {
-  showSpinner(true);
-  setActivity("Memulai pembersihan dan pemuatan data...");
-  
-  try {
-    await deleteDatabase();
-    await loadDropdown();
-    
-    // Tampilkan spinner saat request ke server
-    showSpinner(true);
-    setActivity("Mengambil data dari server...");
-    
-    const r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "read" }) });
-    const d = await r.json();
-    
-    if (d.fields && d.records) {
-      headerFields = d.fields;
-      lastRowFields = headerFields[headerFields.length - 1];
-      d.records = d.records.map(r => { if (!r.id) r.id = r[0] ?? Date.now().toString(); return r; });
-      await initDB(d.records);
-      await renderTable(); // renderTable akan menyembunyikan spinner setelah selesai
-    } else {
-      showSpinner(false);
-      setActivity("Format data tidak valid dari server.");
-    }
-  } catch (error) {
-    console.error("Error during initialization:", error);
-    setActivity("Gagal memuat data dari server.");
-    showSpinner(false);
-  }
-})();
+        // ===== RENDER: TABLE HEADERS =====
+        function renderTable() {
+            const thead = document.getElementById('tableHead');
+            const tbody = document.getElementById('tableBody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
 
-/* ---------- Event ---------- */
-document.getElementById("btnAdd").onclick    = () => openModal();
-document.getElementById("btnSync").onclick   = syncToServer;
-document.getElementById("btnSave").onclick   = simpanData;
-document.getElementById("btnDelete").onclick = hapusData;
-document.getElementById("btnClear").onclick  = manualCleaningGuide;
+            if (!state.headers['ROW1']) {
+                tbody.innerHTML = '<tr><td colspan="100" class="empty-state">Struktur header tidak ditemukan</td></tr>';
+                return;
+            }
 
-// Event listener untuk modal Bootstrap
-document.getElementById('dataModal').addEventListener('hidden.bs.modal', function () {
-  showModal(false);
-});
-</script>
+            // --- RENDER HEADER ---
+            const firstRow = state.headers['ROW1'];
+            const keys = Object.keys(firstRow);
+            const maxCol = parseInt(keys[keys.length - 1].replace('COL', ''), 10);
+            
+            // Grid map untuk melacak sel yang sudah tertutup oleh merge
+            const gridMap = Array(6).fill(null).map(() => Array(maxCol + 1).fill(false));
+
+            for (let r = 1; r <= 5; r++) {
+                const tr = document.createElement('tr');
+                const rowData = state.headers[`ROW${r}`];
+
+                for (let c = 1; c <= maxCol; c++) {
+                    const colKey = `COL${String(c).padStart(3, '0')}`;
+
+                    // Jika posisi ini sudah ditempati oleh merge dari sel sebelumnya, skip
+                    if (gridMap[r][c]) continue;
+
+                    const cell = rowData[colKey];
+                    const th = document.createElement('th');
+                    th.textContent = cell.value || '';
+                    
+                    // --- LOGIC HEADER (TIDAK DIUBAH) ---
+                    if (cell.isMerged) {
+                        // TRUE: Atur merger sesuai respon API
+                        const colspan = parseInt(cell.colspan, 10) || 1;
+                        const rowspan = parseInt(cell.rowspan, 10) || 1;
+                        
+                        th.colSpan = colspan;
+                        th.rowSpan = rowspan;
+
+                        // Tandai area di gridMap
+                        for (let ri = 0; ri < rowspan; ri++) {
+                            for (let ci = 0; ci < colspan; ci++) {
+                                gridMap[r + ri][c + ci] = true;
+                            }
+                        }
+                    } else {
+                        // FALSE: JANGAN di merger. Selalu 1x1.
+                        th.colSpan = 1;
+                        th.rowSpan = 1;
+                        gridMap[r][c] = true;
+                    }
+
+                    tr.appendChild(th);
+                }
+                thead.appendChild(tr);
+            }
+
+            // --- RENDER BODY ---
+            updatePaginationUI();
+            
+            const totalItems = state.filteredData.length;
+            if (totalItems === 0) {
+                tbody.innerHTML = '<tr><td colspan="100" class="empty-state">Data tidak ditemukan.</td></tr>';
+                return;
+            }
+
+            const start = (state.currentPage - 1) * state.rowsPerPage;
+            const end = start + state.rowsPerPage;
+            const visibleData = state.filteredData.slice(start, end);
+
+            visibleData.forEach(row => {
+                const tr = createRowElement(row);
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Helper: Create TR Element
+        function createRowElement(row) {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-id', row.ID); 
+            tr.onclick = () => openModal('edit', row);
+            
+            const firstRow = state.headers['ROW1'];
+            const keys = Object.keys(firstRow);
+            const maxCol = parseInt(keys[keys.length - 1].replace('COL', ''), 10);
+
+            for (let c = 1; c <= maxCol; c++) {
+                const colKey = `COL${String(c).padStart(3, '0')}`;
+                const td = document.createElement('td');
+                td.textContent = row[colKey] || '';
+                if (state.readonlyCols.includes(c)) {
+                    td.style.color = '#9ca3af';
+                    td.style.fontStyle = 'italic';
+                }
+                tr.appendChild(td);
+            }
+            return tr;
+        }
+
+        // ===== SEARCH & PAGINATION LOGIC =====
+        function updatePaginationUI() {
+            const totalItems = state.filteredData.length;
+            const totalPages = Math.ceil(totalItems / state.rowsPerPage) || 1;
+            document.getElementById('pageInfo').textContent = `Hal ${state.currentPage} / ${totalPages}`;
+            document.getElementById('btnPrev').disabled = state.currentPage === 1;
+            document.getElementById('btnNext').disabled = state.currentPage === totalPages || totalItems === 0;
+        }
+
+        function handleSearch() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            state.searchTerm = term;
+            state.currentPage = 1;
+
+            if (!term) {
+                state.filteredData = state.data;
+            } else {
+                state.filteredData = state.data.filter(row => {
+                    return Object.values(row).some(val => 
+                        String(val).toLowerCase().includes(term)
+                    );
+                });
+            }
+            renderTable(); 
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(state.filteredData.length / state.rowsPerPage);
+            const newPage = state.currentPage + direction;
+            if (newPage >= 1 && newPage <= totalPages) {
+                state.currentPage = newPage;
+                renderTable();
+            }
+        }
+
+        function changeRowsPerPage() {
+            state.rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+            state.currentPage = 1;
+            renderTable();
+        }
+
+        // ===== CRUD HANDLERS (OPTIMIZED) =====
+
+        async function submitForm() {
+            showLoader(true);
+            const form = document.getElementById('crudForm');
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) data[key] = value;
+
+            try {
+                const action = (currentMode === 'create') ? 'create' : 'update';
+                const res = await fetchAPI(action, data);
+
+                if (res.success) {
+                    showToast(res.message || "Berhasil disimpan", "success");
+                    closeModal();
+
+                    if (action === 'update') {
+                        const freshRowRes = await fetchAPI('read', { id: data.id });
+                        if (freshRowRes.success && freshRowRes.data.length > 0) {
+                            const newRow = freshRowRes.data[0];
+                            const index = state.data.findIndex(r => r.ID === data.id);
+                            if (index !== -1) state.data[index] = newRow;
+
+                            const isMatch = !state.searchTerm || Object.values(newRow).some(val => 
+                                String(val).toLowerCase().includes(state.searchTerm)
+                            );
+
+                            if (isMatch) {
+                                updateRowInDOM(newRow);
+                                const fIndex = state.filteredData.findIndex(r => r.ID === data.id);
+                                if (fIndex !== -1) state.filteredData[fIndex] = newRow;
+                            } else {
+                                removeRowFromDOM(data.id);
+                                state.filteredData = state.filteredData.filter(r => r.ID !== data.id);
+                                updatePaginationUI();
+                            }
+                        }
+                    } else {
+                        const freshRowRes = await fetchAPI('read', { id: res.id });
+                        if (freshRowRes.success && freshRowRes.data.length > 0) {
+                            const newRow = freshRowRes.data[0];
+                            state.data.push(newRow);
+
+                            const isMatch = !state.searchTerm || Object.values(newRow).some(val => 
+                                String(val).toLowerCase().includes(state.searchTerm)
+                            );
+
+                            if (isMatch) {
+                                state.filteredData.push(newRow);
+                                addNewRowToDOM(newRow);
+                            }
+                        }
+                    }
+
+                } else {
+                    showToast(res.error || "Terjadi kesalahan", "error");
+                }
+            } catch (error) {
+                showToast("Gagal menghubungi server", "error");
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function deleteData() {
+            const id = document.getElementById('inputId').value;
+            if (!id || !confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
+
+            showLoader(true);
+            try {
+                const res = await fetchAPI('delete', { id: id });
+                if (res.success) {
+                    showToast(res.message || "Data dihapus", "success");
+                    closeModal();
+                    
+                    state.data = state.data.filter(r => r.ID !== id);
+                    state.filteredData = state.filteredData.filter(r => r.ID !== id);
+                    removeRowFromDOM(id);
+                    
+                    const totalItems = state.filteredData.length;
+                    const totalPages = Math.ceil(totalItems / state.rowsPerPage);
+                    if (state.currentPage > totalPages && state.currentPage > 1) {
+                        state.currentPage = totalPages;
+                        renderTable(); 
+                    } else {
+                        updatePaginationUI();
+                    }
+
+                } else {
+                    showToast(res.error || "Gagal menghapus", "error");
+                }
+            } catch (error) {
+                showToast("Gagal menghubungi server", "error");
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // ===== DOM MANIPULATION HELPERS =====
+        
+        function updateRowInDOM(rowData) {
+            const tr = document.querySelector(`tr[data-id="${rowData.ID}"]`);
+            if (tr) {
+                tr.classList.remove('row-updated');
+                void tr.offsetWidth; 
+                tr.classList.add('row-updated');
+
+                const cells = tr.querySelectorAll('td');
+                const firstRow = state.headers['ROW1'];
+                const keys = Object.keys(firstRow);
+                const maxCol = parseInt(keys[keys.length - 1].replace('COL', ''), 10);
+
+                for (let c = 1; c <= maxCol; c++) {
+                    const colKey = `COL${String(c).padStart(3, '0')}`;
+                    if (cells[c-1]) {
+                        cells[c-1].textContent = rowData[colKey] || '';
+                    }
+                }
+            }
+        }
+
+        function removeRowFromDOM(id) {
+            const tr = document.querySelector(`tr[data-id="${id}"]`);
+            if (tr) {
+                tr.remove();
+            }
+        }
+
+        function addNewRowToDOM(rowData) {
+            const totalItems = state.filteredData.length;
+            const totalPages = Math.ceil(totalItems / state.rowsPerPage);
+            
+            if (state.currentPage === totalPages || totalItems === 1) {
+                const tbody = document.getElementById('tableBody');
+                const tr = createRowElement(rowData);
+                tr.classList.add('row-updated'); 
+                tbody.appendChild(tr);
+                updatePaginationUI();
+            } else {
+                updatePaginationUI();
+            }
+        }
+
+        // ===== MODAL LOGIC =====
+        let currentMode = 'create';
+
+        function openModal(mode, rowData = null) {
+            currentMode = mode;
+            const modal = document.getElementById('crudModal');
+            const title = document.getElementById('modalTitle');
+            const formGrid = document.getElementById('formGrid');
+            const btnDelete = document.getElementById('btnDelete');
+            const form = document.getElementById('crudForm');
+
+            formGrid.innerHTML = '';
+            form.reset();
+
+            if (mode === 'create') {
+                title.textContent = "Tambah Data Baru";
+                btnDelete.style.display = 'none';
+                document.getElementById('inputId').value = '';
+            } else {
+                title.textContent = "Edit Data";
+                btnDelete.style.display = 'block';
+                document.getElementById('inputId').value = rowData.ID;
+            }
+
+            const firstRow = state.headers['ROW1'];
+            const keys = Object.keys(firstRow);
+            const maxCol = parseInt(keys[keys.length - 1].replace('COL', ''), 10);
+
+            for (let c = 1; c <= maxCol; c++) {
+                const colKey = `COL${String(c).padStart(3, '0')}`;
+                const isReadonly = state.readonlyCols.includes(c);
+                const label = state.columnLabels[colKey] || `Kolom ${c}`;
+                const value = (mode === 'edit' && rowData) ? (rowData[colKey] || '') : '';
+                
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                const labelEl = document.createElement('label');
+                labelEl.textContent = label;
+                div.appendChild(labelEl);
+
+                let inputEl;
+                if (state.dropdowns[colKey]) {
+                    inputEl = document.createElement('select');
+                    inputEl.name = colKey;
+                    const optEmpty = document.createElement('option');
+                    optEmpty.value = ""; optEmpty.textContent = "- Pilih -";
+                    inputEl.appendChild(optEmpty);
+                    state.dropdowns[colKey].options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt; option.textContent = opt;
+                        if (opt === value) option.selected = true;
+                        inputEl.appendChild(option);
+                    });
+                    if (isReadonly) inputEl.disabled = true;
+                } else {
+                    inputEl = document.createElement('input');
+                    inputEl.type = 'text'; inputEl.name = colKey; inputEl.value = value;
+                    if (isReadonly) inputEl.disabled = true;
+                }
+                div.appendChild(inputEl);
+                formGrid.appendChild(div);
+            }
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('crudModal').classList.remove('active');
+        }
+
+        // ===== UTILS =====
+        function showLoader(show) {
+            const el = document.getElementById('loader');
+            if (show) el.classList.add('active'); else el.classList.remove('active');
+        }
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease-in';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
