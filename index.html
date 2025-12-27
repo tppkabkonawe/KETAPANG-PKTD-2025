@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -65,7 +66,6 @@
         }
 
         /* --- HEADER STYLING UPDATE --- */
-        /* Style dasar untuk semua header (tidak sticky) */
         th { 
             background: var(--header-bg); 
             font-weight: 600; 
@@ -76,24 +76,21 @@
             max-width: 300px;
             line-height: 1.4;
             color: var(--text-main);
-            /* Hapus sticky global di sini agar baris 1-4 ikut scroll */
         }
 
-        /* KHUSUS: Baris terakhir header yang akan sticky */
         thead tr:last-child th {
             position: sticky;
             top: 0;
-            z-index: 20; /* Lebih tinggi dari konten normal */
+            z-index: 20; 
             background: var(--sticky-header-bg);
-            border-bottom: 2px solid #94a3b8; /* Border bawah lebih tegas */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Efek melayang */
+            border-bottom: 2px solid #94a3b8; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
         }
         /* ----------------------------- */
 
         td { text-align: left; white-space: nowrap; background: #fff; z-index: 1; position: relative; }
         tr:hover td { background-color: #eff6ff; cursor: pointer; }
         
-        /* Animation for new row */
         @keyframes highlight {
             0% { background-color: #bbf7d0; }
             100% { background-color: transparent; }
@@ -161,7 +158,7 @@
     <div class="container">
         <header>
             <div class="header-title">
-                <!-- Title diubah agar memiliki ID untuk update otomatis -->
+                <!-- Title auto update -->
                 <h1 id="sheetTitle">Load...</h1>
             </div>
             <div class="search-box">
@@ -233,7 +230,7 @@
 
     <script>
         // ===== CONFIGURATION =====
-        const API_URL = "https://script.google.com/macros/s/AKfycbzPOpIHoR_af6jH8B8dkmMgD3IVwUbFIjRGC0A2WxAOOmqbF31MKluHxGwr7NfVEJ4s1A/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbz33fH76_pAC5GJjjEEim_aplKmNJai4F2OM3wkwsMgGqviwR6oTkXR8cbi4X_MgzEiRw/exec";
 
         // ===== STATE =====
         let state = {
@@ -242,7 +239,7 @@
             dropdowns: {},
             data: [],
             readonlyCols: [],
-            fileName: '', // Properti baru untuk nama file
+            fileName: '', 
             
             // Pagination & Search
             currentPage: 1,
@@ -259,12 +256,11 @@
         async function loadData() {
             showLoader(true);
             try {
-                // Tambahkan fetchAPI('namefile') ke dalam Promise.all
                 const [headersRes, dropdownsRes, dataRes, nameFileRes] = await Promise.all([
                     fetchAPI('headers'),
                     fetchAPI('dropdown'),
                     fetchAPI('read'),
-                    fetchAPI('namefile') // Panggil API nama file
+                    fetchAPI('namefile')
                 ]);
 
                 if (headersRes.success) {
@@ -278,7 +274,6 @@
                     state.filteredData = state.data;
                 }
                 
-                // Update Judul Halaman
                 if (nameFileRes.success && nameFileRes.name) {
                     state.fileName = nameFileRes.name;
                     document.getElementById('sheetTitle').textContent = state.fileName;
@@ -293,11 +288,15 @@
             }
         }
 
-        // ===== API HELPER =====
+        // ===== API HELPER (SIMPLE - NO CORS HEADERS) =====
         async function fetchAPI(action, data = {}) {
             let url = `${API_URL}?action=${action}`;
             const options = {
                 method: 'POST',
+                // Kita TIDAK menambahkan headers 'Content-Type': 'application/json'
+                // Browser akan mengirim default 'text/plain'.
+                // Code.gs telah dimodifikasi untuk membaca e.postData.contents secara langsung,
+                // sehingga tidak terjadi error CORS Preflight.
                 body: JSON.stringify(data)
             };
             const response = await fetch(url, options);
@@ -339,7 +338,6 @@
                 return;
             }
 
-            // --- RENDER HEADER ---
             const firstRow = state.headers['ROW1'];
             const keys = Object.keys(firstRow);
             const maxCol = parseInt(keys[keys.length - 1].replace('COL', ''), 10);
@@ -361,9 +359,8 @@
                     const th = document.createElement('th');
                     th.textContent = cell.value || '';
                     
-                    // --- LOGIC HEADER (TIDAK DIUBAH) ---
+                    // --- LOGIC HEADER ---
                     if (cell.isMerged) {
-                        // TRUE: Atur merger sesuai respon API
                         const colspan = parseInt(cell.colspan, 10) || 1;
                         const rowspan = parseInt(cell.rowspan, 10) || 1;
                         
@@ -377,7 +374,6 @@
                             }
                         }
                     } else {
-                        // FALSE: JANGAN di merger. Selalu 1x1.
                         th.colSpan = 1;
                         th.rowSpan = 1;
                         gridMap[r][c] = true;
@@ -388,7 +384,6 @@
                 thead.appendChild(tr);
             }
 
-            // --- RENDER BODY ---
             updatePaginationUI();
             
             const totalItems = state.filteredData.length;
@@ -411,7 +406,9 @@
         function createRowElement(row) {
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', row.ID); 
-            tr.onclick = () => openModal('edit', row);
+            
+            // Kirim ID saja
+            tr.onclick = () => openModal('edit', row.ID);
             
             const firstRow = state.headers['ROW1'];
             const keys = Object.keys(firstRow);
@@ -471,7 +468,7 @@
             renderTable();
         }
 
-        // ===== CRUD HANDLERS (OPTIMIZED) =====
+        // ===== CRUD HANDLERS =====
 
         async function submitForm() {
             showLoader(true);
@@ -488,31 +485,43 @@
                     showToast(res.message || "Berhasil disimpan", "success");
                     closeModal();
 
+                    // Refresh data dari server untuk memastikan format tampilan update (Rp, Tanggal)
                     if (action === 'update') {
                         const freshRowRes = await fetchAPI('read', { id: data.id });
                         if (freshRowRes.success && freshRowRes.data.length > 0) {
                             const newRow = freshRowRes.data[0];
+                            
+                            // Update Master Data
                             const index = state.data.findIndex(r => r.ID === data.id);
                             if (index !== -1) state.data[index] = newRow;
 
+                            // Cek Filter
                             const isMatch = !state.searchTerm || Object.values(newRow).some(val => 
                                 String(val).toLowerCase().includes(state.searchTerm)
                             );
 
+                            // Update Filtered Data & DOM
                             if (isMatch) {
-                                updateRowInDOM(newRow);
                                 const fIndex = state.filteredData.findIndex(r => r.ID === data.id);
-                                if (fIndex !== -1) state.filteredData[fIndex] = newRow;
+                                if (fIndex !== -1) {
+                                    state.filteredData[fIndex] = newRow;
+                                    updateRowInDOM(newRow);
+                                } else {
+                                    state.filteredData.push(newRow);
+                                    addNewRowToDOM(newRow);
+                                }
                             } else {
-                                removeRowFromDOM(data.id);
                                 state.filteredData = state.filteredData.filter(r => r.ID !== data.id);
-                                updatePaginationUI();
+                                removeRowFromDOM(data.id);
                             }
                         }
                     } else {
+                        // Logic Create
                         const freshRowRes = await fetchAPI('read', { id: res.id });
                         if (freshRowRes.success && freshRowRes.data.length > 0) {
                             const newRow = freshRowRes.data[0];
+                            
+                            // Masukkan ke master data
                             state.data.push(newRow);
 
                             const isMatch = !state.searchTerm || Object.values(newRow).some(val => 
@@ -530,6 +539,7 @@
                     showToast(res.error || "Terjadi kesalahan", "error");
                 }
             } catch (error) {
+                console.error(error);
                 showToast("Gagal menghubungi server", "error");
             } finally {
                 showLoader(false);
@@ -604,6 +614,7 @@
             const totalItems = state.filteredData.length;
             const totalPages = Math.ceil(totalItems / state.rowsPerPage);
             
+            // Tambah ke DOM jika berada di halaman terakhir
             if (state.currentPage === totalPages || totalItems === 1) {
                 const tbody = document.getElementById('tableBody');
                 const tr = createRowElement(rowData);
@@ -618,7 +629,7 @@
         // ===== MODAL LOGIC =====
         let currentMode = 'create';
 
-        function openModal(mode, rowData = null) {
+        function openModal(mode, rowDataOrId = null) {
             currentMode = mode;
             const modal = document.getElementById('crudModal');
             const title = document.getElementById('modalTitle');
@@ -629,6 +640,9 @@
             formGrid.innerHTML = '';
             form.reset();
 
+            // Cari data row dari state.data berdasarkan ID untuk memastikan data terbaru
+            let rowData = null;
+
             if (mode === 'create') {
                 title.textContent = "Tambah Data Baru";
                 btnDelete.style.display = 'none';
@@ -636,6 +650,19 @@
             } else {
                 title.textContent = "Edit Data";
                 btnDelete.style.display = 'block';
+                
+                // Logic cari data
+                if (typeof rowDataOrId === 'string' || typeof rowDataOrId === 'number') {
+                    rowData = state.data.find(r => r.ID == rowDataOrId);
+                } else if (typeof rowDataOrId === 'object' && rowDataOrId !== null) {
+                    rowData = rowDataOrId;
+                }
+
+                if (!rowData) {
+                    showToast("Data tidak ditemukan", "error");
+                    return;
+                }
+                
                 document.getElementById('inputId').value = rowData.ID;
             }
 
@@ -647,6 +674,8 @@
                 const colKey = `COL${String(c).padStart(3, '0')}`;
                 const isReadonly = state.readonlyCols.includes(c);
                 const label = state.columnLabels[colKey] || `Kolom ${c}`;
+                
+                // Ambil nilai dari rowData
                 const value = (mode === 'edit' && rowData) ? (rowData[colKey] || '') : '';
                 
                 const div = document.createElement('div');
@@ -665,7 +694,8 @@
                     state.dropdowns[colKey].options.forEach(opt => {
                         const option = document.createElement('option');
                         option.value = opt; option.textContent = opt;
-                        if (opt === value) option.selected = true;
+                        // Bandingkan string untuk dropdown agar lebih aman
+                        if (String(opt) === String(value)) option.selected = true;
                         inputEl.appendChild(option);
                     });
                     if (isReadonly) inputEl.disabled = true;
